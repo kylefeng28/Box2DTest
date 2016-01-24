@@ -1,4 +1,4 @@
-// http://www.iforce2d.net/embox2d/embox2d-helpers.js
+// Adapted from http://www.iforce2d.net/embox2d/embox2d-helpers.js
 
 // Having to type 'Box2D.' in front of everything makes porting
 // existing C++ code a pain in the butt. This function can be used
@@ -26,30 +26,13 @@ function using(ns, pattern, to) {
     }
 }
 
-
-var e_shapeBit = 0x0001;
-var e_jointBit = 0x0002;
-var e_aabbBit = 0x0004;
-var e_pairBit = 0x0008;
-var e_centerOfMassBit = 0x0010;
-
-
-//to replace original C++ operator =
-function copyVec2(vec) {
-    return new b2Vec2(vec.get_x(), vec.get_y());
+function isEqualVV(vec1, vec2) {
+	return vec1.x == vec2.x && vec1.y == vec2.y;
 }
 
-//to replace original C++ operator * (float)
-function scaleVec2(vec, scale) {
-    vec.set_x( scale * vec.get_x() );
-    vec.set_y( scale * vec.get_y() );            
+function randomVec2() {
+	return new b2Vec2(Math.random(), Math.random());
 }
-
-//to replace original C++ operator *= (float)
-function scaledVec2(vec, scale) {
-    return new b2Vec2(scale * vec.get_x(), scale * vec.get_y());
-}
-
 
 // http://stackoverflow.com/questions/12792486/emscripten-bindings-how-to-create-an-accessible-c-c-array-from-javascript
 function createChainShape(vertices, closedLoop) {
