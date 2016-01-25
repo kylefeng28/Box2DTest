@@ -18,7 +18,7 @@ var KeyboardState = function() {
 
 KeyboardState.prototype.handleKeyDown = function(/*KeyboardEvent*/ e) {
 	this.lastEvent = e;
-	var key = this.lookup(e.key);
+	var key = this.lookup(e);
 	if (key in this.suppress) {
 		e.preventDefault();
 	}
@@ -29,7 +29,7 @@ KeyboardState.prototype.handleKeyDown = function(/*KeyboardEvent*/ e) {
 
 KeyboardState.prototype.handleKeyUp = function(/*KeyboardEvent*/ e) {
 	this.lastEvent = e;
-	var key = KeyboardState.lookup(e.key);
+	var key = this.lookup(e);
 	this.keys[key] = false;
 	this.lastKey = key;
 	this.debug();
@@ -43,7 +43,8 @@ KeyboardState.prototype.isKeyUp = function(key) {
 	return !this.keys[key];
 }
 
-KeyboardState.lookup = KeyboardState.prototype.lookup = function(ekey) {
+KeyboardState.lookup = KeyboardState.prototype.lookup = function(e) {
+	var ekey = e.key || String.fromKeyCode(e.keyCode); // keyIdentifier?
 	var key = ekey.toLowerCase();
 	key = Keys[key] || key;
 	return key;

@@ -3,9 +3,13 @@
 // TODO: move common code to somewhere else
 
 var Test2 = {};
+
+// This is a bit messy
 var gravityMagnitude = 50;
 var bodies = [];
 var isNBody = false;
+
+var bodyDef, fixDef;
 
 (function() {
 Test2.setup = function () {
@@ -14,14 +18,14 @@ Test2.setup = function () {
 	
 	// Ground {{{
 	// Fixture definition and shape
-	var fixDef = new b2FixtureDef();
+	fixDef = new b2FixtureDef();
 	fixDef.density = 1.0;
 	fixDef.friction = 0.5;
 	fixDef.restitution = 0.2;
 	fixDef.shape = new b2PolygonShape();
 	fixDef.shape.SetAsBox(CANVAS_WIDTH / SCALE / 2, 10 / SCALE / 2);
 	
-	var bodyDef = new b2BodyDef();
+	bodyDef = new b2BodyDef();
 	bodyDef.type = b2Body.b2_staticBody;
 	
 	bodyDef.position.x = CANVAS_WIDTH / 2 / SCALE;
@@ -39,21 +43,7 @@ Test2.setup = function () {
 	// }}}
 	
 	// Bodies {{{
-	bodyDef.type = b2Body.b2_dynamicBody;
-	for (var i = 0; i < 10; ++i) {
-	    if (Math.random() > 0.5) {
-	        fixDef.shape = new b2PolygonShape;
-	        fixDef.shape.SetAsBox(
-	              Math.random() + 0.1 // half width
-	           ,  Math.random() + 0.1 // half height
-	        );
-	    } else {
-	        fixDef.shape = new b2CircleShape(Math.random() + 0.1); // radius
-	    }
-	    bodyDef.position.x = Math.random() * 25;
-	    bodyDef.position.y = Math.random() * 10;
-	    bodies.push(world.CreateBody(bodyDef).CreateFixture(fixDef).GetBody());
-	}
+	this.addRandom(10);
 	// }}}
 	
 	// Player {{{
@@ -123,6 +113,26 @@ Test2.handleKeyUp = function(e) {
 	kb.handleKeyUp(e);
 };
 
+Test2.addRandom = function(n) {
+	n = n || 1;
+
+	bodyDef.type = b2Body.b2_dynamicBody;
+	for (var i = 0; i < n; ++i) {
+	    if (Math.random() > 0.5) {
+	        fixDef.shape = new b2PolygonShape();
+	        fixDef.shape.SetAsBox(
+	              Math.random() + 0.1 // half width
+	           ,  Math.random() + 0.1 // half height
+	        );
+	    } else {
+	        fixDef.shape = new b2CircleShape(Math.random() + 0.1); // radius
+	    }
+	    bodyDef.position.x = Math.random() * 25;
+	    bodyDef.position.y = Math.random() * 10;
+	    bodies.push(world.CreateBody(bodyDef).CreateFixture(fixDef).GetBody());
+	}
+}
+
 /*
  * dir:
  *   1: right
@@ -156,24 +166,6 @@ Test2.wakeAll = function() {
 	}
 }
 
-Test2.calculateGravity = function(body1, body2) {
-	// Gravitional fields?
-	// F_g = G * m1*m2 / r^2
-	
-	var G = 0.667; // Gravitational constant * 10^10
-
-	var m1 = body1.GetMass();
-	var m2 = body2.GetMass();
-
-	var diff = b2Math.SubtractVV(body2.GetPosition(), body1.GetPosition());
-	var n_hat = diff.Copy(); n_hat.Normalize();
-
-	var r_2 = diff.LengthSquared();
-
-	var F_g = b2Math.MulFV(G * m1 * m2 / r_2, n_hat);
-	return F_g;
-}
-
 Test2.nBody = function() {
 	for (var i in bodies) {
 		for (var j in bodies) {
@@ -181,7 +173,7 @@ Test2.nBody = function() {
 			var b2 = bodies[j];
 
 			if (b1 != b2) {
-				var F_g = this.calculateGravity(b1, b2);
+				var F_g = calculateGravity(b1, b2);
 				b1.ApplyForce(F_g, b1.GetWorldCenter())
 			}
 		}

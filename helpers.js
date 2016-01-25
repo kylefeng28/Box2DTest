@@ -76,3 +76,21 @@ function createRandomPolygonShape(radius) {
     }            
     return createPolygonShape(verts);
 }
+
+function calculateGravity(body1, body2) {
+	// Gravitional fields?
+	// F_g = G * m1*m2 / r^2
+	
+	var G = 0.667; // Gravitational constant * 10^10
+
+	var m1 = body1.GetMass();
+	var m2 = body2.GetMass();
+
+	var diff = b2Math.SubtractVV(body2.GetPosition(), body1.GetPosition());
+	var n_hat = diff.Copy(); n_hat.Normalize();
+
+	var r_2 = diff.LengthSquared();
+
+	var F_g = b2Math.MulFV(G * m1 * m2 / r_2, n_hat);
+	return F_g;
+}
