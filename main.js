@@ -10,6 +10,7 @@ var SCALE = 30;
 var kb;
 var canvas, context;
 var world, debugDraw;
+var _bodyDef, _fixDef;
 
 // Initialization code
 function init() {
@@ -22,6 +23,10 @@ function init() {
 	// Keyboard
 	kb = new KeyboardState();
 	kb.suppress.push("Space");
+
+	// _bodyDef and _fixDef
+	_bodyDef = new b2BodyDef();
+	_fixDef = new b2FixtureDef();
 }
 
 // Debug draw setup

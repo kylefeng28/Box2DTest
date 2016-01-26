@@ -94,3 +94,25 @@ function calculateGravity(body1, body2) {
 	var F_g = b2Math.MulFV(G * m1 * m2 / r_2, n_hat);
 	return F_g;
 }
+
+function nBody(bodies, player) {
+	for (var i in bodies) {
+		var b1 = bodies[i];
+		for (var j in bodies) {
+			var b2 = bodies[j];
+
+			if (b1 != b2) {
+				var F_g = calculateGravity(b1, b2);
+				b1.ApplyForce(F_g, b1.GetWorldCenter())
+			}
+		}
+
+		if (player) {
+			// Avoid calculating twice in 2 loops
+			var F_g = calculateGravity(b1, player);
+			b1.ApplyForce(F_g, b1.GetWorldCenter());
+			player.ApplyForce(F_g.GetNegative(), player.GetWorldCenter())
+		}
+	}
+}
+
