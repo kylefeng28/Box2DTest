@@ -21,7 +21,7 @@ function init() {
 	context = canvas.getContext("2d");
 
 	// Keyboard
-	kb = new KeyboardState();
+	kb = new Keyboard();
 	kb.suppress.push("Space");
 
 	// _bodyDef and _fixDef
